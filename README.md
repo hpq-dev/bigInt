@@ -71,6 +71,11 @@ This function transforms from a string to bigint. (be careful there are numbers 
 ```pawn
 string_to_bigInt(var_name, const string[]);
 ```
+These functions are compatible on mysql r41-4 and r-39-6
+```pawn
+cache_get_value_name_bigint(var_name, row, column[]); // r41-4
+cache_get_field_content_bigint(var_name, row, column[]); // r39-6
+```
 
 To make it compatible with a money system:
 ```pawn
@@ -79,7 +84,19 @@ new_BigInt::<cash[MAX_PLAYERS]>
 #define GivePlayerCash(%0,%1) add32Bit(cash[%0],%1)
 #define GetPlayerCash(%0) convert64to32(cash[%0])
 
+// show money
 new str[50];
 format(str, sizeof str, "%s", FormatBigInt(cash[playerid]));
+
+// login
+cache_get_value_name_bigint(cash[playerid],0,"Money");
+
+// disconect save
+public OnPlayerDisconect(playerid) {
+    new query[128];
+    mysql_format(handle, query, "UPDATE `users` SET `Money` = '%s' ...", returnBigInt(cash[playerid]));
+    mysql_tquery(handle, query);
+    return true;
+}
 
 ```
