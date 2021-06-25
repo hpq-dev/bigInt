@@ -71,3 +71,15 @@ This function transforms from a string to bigint. (be careful there are numbers 
 ```pawn
 string_to_bigInt(var_name, const string[]);
 ```
+
+To make it compatible with a money system:
+```pawn
+new_BigInt::<cash[MAX_PLAYERS]>
+
+#define GivePlayerCash(%0,%1) add32Bit(cash[%0],%1)
+#define GetPlayerCash(%0) convert64to32(cash[%0])
+
+new str[50];
+format(str, sizeof str, "%s", FormatBigInt(cash[playerid]));
+
+```
