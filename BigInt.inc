@@ -16,7 +16,7 @@ static int_str[32];																												///
 #define _32::									int@																			///
 #define _64::									bigInt@																			///
 #define new_BigInt::<%1>						new bigInt:_32::%1,bigInt:_64::%1;												///
-#define _64bit(%0,%1,%2) 						(((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin))) 									///
+#define _64bit(%0,%1,%2) 						(((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin))) // by y_less						///
 #define _KKK 									(1000000000)																	///
 #define M32bit									(2147483647)																	///
 #define INVALID_BIGINT							(bigInt:0)																		///
@@ -32,7 +32,6 @@ static int_str[32];																												///
 																																///
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////// ** Main functions ** ///////////////////////////////////////////////////////////////////////
 																																///
 stock _selectInt(&bigInt:mInt,&bigInt:Int,val) 		return val<0?_rmvInt(mInt,Int,-val):_addInt(mInt,Int,val);					///
@@ -40,8 +39,8 @@ stock _addInt(&bigInt:mInt,&bigInt:Int,val)			return mInt+=bigInt:((_:Int+val)/_
 stock _resetInt(&bigInt:mInt,&bigInt:int,r_value=0) return mInt=int=bigInt:r_value,1;											///
 stock _rmvInt(&bigInt:mInt,&bigInt:Int,val) {																					///
 	mInt-=bigInt:(val/_KKK);																									///
-	if mInt&&Int<bigInt:_KKK *then Int=bigInt:((_:Int+_KKK)-(val%_KKK)),--mInt; else Int=bigInt:(_:Int-(val%_KKK));				///
-	if _:Int>(_KKK-1) *then ++mInt,Int-=bigInt:_KKK;																			///
+	if(mInt&&Int<bigInt:_KKK) Int=bigInt:((_:Int+_KKK)-(val%_KKK)),--mInt; else Int=bigInt:(_:Int-(val%_KKK));					///
+	if(_:Int>(_KKK-1)) ++mInt,Int-=bigInt:_KKK;																					///
 	return 1;																													///
 }																																///
 stock _64to32(bigInt:_64::mInt,bigInt:_32::Int) {																				///
@@ -61,7 +60,7 @@ stock extractBigInt(&bigInt:ret_mInt,&bigInt:ret_int,const _bigInt[],l=-1,x=-1) 
 	ret_int+=bigInt:strval(int_str);																							///
 }																																///
 stock isBigInt(const bigInt[], i=-1) {																							///						
-	if bigInt[0]=='-'&&bigInt[1] *then ++i;																						///							
+	if(bigInt[0]=='-'&&bigInt[1]) ++i;																							///							
 	while(_64bit(bigInt[++i],48,58)) {}																							///						
 	return !bigInt[i];																											///		
 }																																///
@@ -72,7 +71,7 @@ stock check64Operator(																											///
 	extractBigInt(_64::val,_32::val,_oper2);																					///								
 	switch _oper[0]+_oper[1] do {																								///					
 		case '='+'=': 																											///		
-			if _64::oper1==_64::val&&_32::oper1==_32::val *then return true;													///																
+			if(_64::oper1==_64::val&&_32::oper1==_32::val) return true;															///																
 																																///
 		case '>'+'=': 																											///		
 			if((_64::oper1>_64::val||(_64::oper1==_64::val&&_32::oper1>_32::val))||												///																	
@@ -83,13 +82,13 @@ stock check64Operator(																											///
 				_64::oper1==_64::val&&_32::oper1==_32::val) return true;														///															
 																																///
 		case '!'+'=': 																											///		
-			if !(_64::oper1==_64::val&&_32::oper1==_32::val) *then return true;													///																
+			if(!(_64::oper1==_64::val&&_32::oper1==_32::val)) return true;														///																
 																																///
 		case '<': 																												///	
-			if _64::val>_64::oper1||(_64::oper1==_64::val&&_32::val>_32::oper1) *then return true;								///																					
+			if(_64::val>_64::oper1||(_64::oper1==_64::val&&_32::val>_32::oper1)) return true;									///																					
 																																///
 		case '>': 																												///	
-			if _64::oper1>_64::val||(_64::oper1==_64::val&&_32::oper1>_32::val) *then return true;								///																					
+			if(_64::oper1>_64::val||(_64::oper1==_64::val&&_32::oper1>_32::val)) return true;									///																					
 																																///
 		default: {																												///	
 			#if defined PrintBacktrace																							///						
@@ -106,7 +105,7 @@ stock check64Operator(																											///
 //////////////////////////////////////// ** Other Functions ** ////////////////////////////////////////////////////////////////////
 																																///
 stock _return64bit(bigInt:mInt,bigInt:_int) {																					///
-	if !mInt *then format(int_str,sizeof int_str,"%d", _int); else format(int_str,sizeof int_str,"%d%09d", mInt, _int);			///														
+	if(!mInt) format(int_str,sizeof int_str,"%d", _int); else format(int_str,sizeof int_str,"%d%09d", mInt, _int);				///														
 	return int_str;																												///
 }																																///
 stock _fmt64bit(bigInt:mInt,bigInt:_int, const chars[] = ".", length=-1) {														///			
