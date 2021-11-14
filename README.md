@@ -9,9 +9,13 @@ Include in your code and begin using the library:
 ```
 ## Usage
 
-To create a variable
+To create a variable (old [v.1.1.1])
 ```pawn
 new_BigInt::<var_name>
+```
+To create a variable (now [v.1.1.2])
+```pawn
+new bigInt:var_name<>;
 ```
 This function adds numbers in bigint (max 2147483647/callback)
 ```pawn
