@@ -1,21 +1,17 @@
 
 /*
-	** v1.1.3 **
-
-	Creator: HPQ123 (HPQ123#8114 discord)
-	Thanks Y_less for support.
+	*** v1.1.3 ***
+	*	BIGINT FOR SAMP!
+	*
+	*   Creator: HPQ123 (HPQ123#8114 discord)
+	*
 */
 
 
-new bStr[32];																											
-
-#if !defined ceildiv
-	#define ceildiv(%0,%1) (((%0)-1)/(%1)+1) // credits: Y_less
-#endif
+new bStr[32];																										
 
 #define BigInt:%1; \
 	eBit:ByteVar1@%1,eBit:ByteVar2@%1;
-
 
 #if !defined IS_IN_RANGE
 	#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin))) // credits: Y_less
