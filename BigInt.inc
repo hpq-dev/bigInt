@@ -10,8 +10,7 @@
 
 new bStr[32];																										
 
-#define BigInt:%1; \
-	eBit:ByteVar1@%1,eBit:ByteVar2@%1;
+#define BigInt:%1; eBit:ByteVar1@%1,eBit:ByteVar2@%1;
 
 #if !defined IS_IN_RANGE
 	#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin))) // credits: Y_less
@@ -32,7 +31,6 @@ new bStr[32];
 #define converBytes(%1,%2)\
 	extractBytes(BT:<%1>,%2)															
 																														
-
 #define addBytes32(%1,%2) whereBytes(BT:<%1>,%2)
 stock whereBytes(&eBit:a,&eBit:b,value) {				
 	if(value<0) {			
@@ -84,7 +82,7 @@ stock bytesOperator(
 	eBit:bOP1,eBit:OP1,const _oper[],const _oper2[], 																									
 	eBit:bVal=eBit:0, eBit:Val=eBit:0																								
 ) {																												
-	extractBigInt(bVal,Val,_oper2);																								
+	extractBytes(bVal,Val,_oper2);																								
 	switch _oper[0]+_oper[1] 																					
 	do {																											
 		case '='+'=': if(bOP1==bVal&&OP1==Val) return true;														
@@ -123,13 +121,22 @@ stock formatStrNumber(const int[], const chars[] = ".", l=-1) {
 }																															
 #if defined cache_get_value_name																							
 	#define cache_get_value_name_bigint(%1,%2,%3) \
-		(cache_get_value_name(%2,%3,bStr)&&(ByteVar1@%1=ByteVar2@%1=eBit:0)&&extractBytes(BT:<%1>,bStr))																														
+		(resetBigInt(%1),cache_get_value_name(%2,%3,bStr)&&extractBytes(BT:<%1>,bStr))																												
 #endif																														
 #if defined cache_get_field_content																							
 	#define cache_get_field_content_bigint(%1,%2,%3)\
-		(cache_get_field_content(%2,%3,bStr)&&(ByteVar1@%1=ByteVar2@%1=eBit:0)&&extractBytes(BT:<%1>,bStr))																																																															
+		(resetBigInt(%1),cache_get_field_content(%2,%3,bStr)&&extractBytes(BT:<%1>,bStr))																																																															
 #endif 																														
-#if defined cache_get_value_name_bigint && !defined cache_get_value_name 
-|| defined cache_get_field_content_bigint && !defined cache_get_field_content
+#if defined cache_get_value_name_bigint    && !defined cache_get_value_name
+ || defined cache_get_field_content_bigint && !defined cache_get_field_content
 	#error The function you are using does not match mysql													
 #endif																															
+
+
+#include <YSI_Coding\y_hooks>
+
+hook OnGameModeInit() {
+	new BigInt:vale;
+	if(OPByte(vale, <=, 1000000)) return false;
+	return true;
+}
