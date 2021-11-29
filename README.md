@@ -9,27 +9,23 @@ Include in your code and begin using the library:
 ```
 ## Usage
 
-To create a variable (old [v.1.1.1])
+To create a variable
 ```pawn
-new_BigInt::<var_name>
-```
-To create a variable (now [v.1.1.2])
-```pawn
-new bigInt:var_name<>;
+new BigInt:var_name;
 ```
 This function adds numbers in bigint (max 2147483647/callback)
 ```pawn
-add32Bit(var_name, 1231231231);
+addBytes32(var_name, 1231231231);
 ```
 
 With this function you can add over the limit of 2147483647. It is recommended to use this function only when large numbers are needed.
 ```pawn
-giveBigInt(var_name, 3453453453453525534);
+addBytes64(var_name, 3453453453453525534);
 ```
 
 This function formats your bigint variable.
 ```pawn
-formatBigInt(var_name);
+formatBytes(var_name);
 
 output example:
 // 312.123.512.523
@@ -42,17 +38,17 @@ resetBigInt(var_name);
 
 This function returns the number as a string.
 ```pawn
-returnBigInt(var_name);
+valueBigInt(var_name);
 ```
 
 This function converts from 64 bits to 32 bits.
 ```pawn
-convert64to32(var_name);
+bytes32(var_name);
 ```
 
 With this function you can do some operations for the bigint variable.
 ```pawn
-OP64(var_name, operator, oper1);
+OPByte(var_name, operator, oper1);
 
 // Operators:
 >=
@@ -73,7 +69,7 @@ isBigInt(const string[]);
 
 This function transforms from a string to bigint. (be careful there are numbers in that string!).
 ```pawn
-string_to_bigInt(var_name, const string[]);
+converBytes(var_name, const string[]);
 ```
 These functions are compatible on mysql r41-4 and r-39-6
 ```pawn
@@ -85,12 +81,12 @@ To make it compatible with a money system:
 ```pawn
 new bigInt:cash[MAX_PLAYERS]<>;
 
-#define GivePlayerCash(%0,%1) add32Bit(cash[%0],%1)
-#define GetPlayerCash(%0) convert64to32(cash[%0])
+#define GivePlayerCash(%0,%1) addBytes32(cash[%0],%1)
+#define GetPlayerCash(%0) bytes32(cash[%0])
 
 // show money
 new str[50];
-format(str, sizeof str, "%s", FormatBigInt(cash[playerid]));
+format(str, sizeof str, "%s", formatBytes(cash[playerid]));
 
 // login
 cache_get_value_name_bigint(cash[playerid],0,"Money");
@@ -98,7 +94,7 @@ cache_get_value_name_bigint(cash[playerid],0,"Money");
 // disconect save
 public OnPlayerDisconect(playerid) {
     new query[128];
-    mysql_format(handle, query, "UPDATE `users` SET `Money` = '%s' ...", returnBigInt(cash[playerid]));
+    mysql_format(handle, query, "UPDATE `users` SET `Money` = '%s' ...", valueBigInt(cash[playerid]));
     mysql_tquery(handle, query);
     return true;
 }
