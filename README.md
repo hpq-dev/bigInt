@@ -79,7 +79,7 @@ cache_get_field_content_bigint(var_name, row, column[]); // r39-6
 
 To make it compatible with a money system:
 ```pawn
-new bigInt:cash[MAX_PLAYERS]<>;
+new BigInt:cash[MAX_PLAYERS];
 
 #define GivePlayerCash(%0,%1) addBytes32(cash[%0],%1)
 #define GetPlayerCash(%0) bytes32(cash[%0])
