@@ -59,7 +59,7 @@ OPByte(var_name, operator, oper1);
 >
 
 // example:
-if(OP64(var_name, <=, 10000)) return true;
+if(OPByte(var_name, <=, 10000)) return true;
 ```
 
 This function checks for string numbers.
