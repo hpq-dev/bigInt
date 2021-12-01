@@ -11,22 +11,20 @@
 new bStr[32];																										
 
 #define BigInt:%1; eBit:ByteVar1@%1,eBit:ByteVar2@%1;
+#define BT:<%1>	ByteVar1@%1,ByteVar2@%1		
 
 #if !defined IS_IN_RANGE
 	#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin))) // credits: Y_less
 #endif
 
 #define Bytes1024\
-	(1000000000)																				
-
-#define BT:<%1>\
-	ByteVar1@%1,ByteVar2@%1				
+	(1000000000)																						
 																																
 #define formatBytes(%1)\
 	_formatBytes(BT:<%1>)									
 
 #define resetBigInt(%1)\
-	ByteVar1@%1=ByteVar1@%1=eBit:0										
+	ByteVar1@%1=ByteVar2@%1=eBit:0										
 
 #define converBytes(%1,%2)\
 	extractBytes(BT:<%1>,%2)															
@@ -100,8 +98,7 @@ stock bytesOperator(
 		}																										
 	}																											
 	return false;																								
-}																												
-		
+}					
 #define valueBigInt(%1)	stringBytes(BT:<%1>)																														
 stock stringBytes(eBit:a,eBit:b) {
 	if(!a) format(bStr,sizeof bStr,"%d", _:b);
@@ -131,12 +128,3 @@ stock formatStrNumber(const int[], const chars[] = ".", l=-1) {
  || defined cache_get_field_content_bigint && !defined cache_get_field_content
 	#error The function you are using does not match mysql													
 #endif																															
-
-
-#include <YSI_Coding\y_hooks>
-
-hook OnGameModeInit() {
-	new BigInt:vale;
-	if(OPByte(vale, <=, 1000000)) return false;
-	return true;
-}
