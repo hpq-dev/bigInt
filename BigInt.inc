@@ -41,10 +41,11 @@ stock whereBytes(&eBit:a,&eBit:b,value) {
 }
 
 #define bytes32(%1)	_bytes32(BT:<%1>)		
-stock _bytes32(eBit:a,eBit:b) {																			                                                                                                                          
+stock _bytes32(eBit:a,eBit:b) {														                                                                                                                          
 	switch(_:a) { 																													                                                                                                                       
-		case -1..1: return (_:a * Bytes1024) + _:b; 																                                                                                                                       
-		case -2,2: 	return (_:a * Bytes1024) + (_:b < cellmax? (_:b) : cellmax); 								                                                                                                                       
+		case -1..1: return (_:a * Bytes1024) + _:b; 								
+		case -2: 	return _:b > cellmax%Bytes1024 ? -cellmax : -((_:a * Bytes1024) + _:b);		                                                                                                                       
+		case 2: 	return _:b > cellmax%Bytes1024 ? cellmax : ((_:a * Bytes1024) + _:b);							                                                                                                                       
 		default: 	return _:a > -1 ? cellmax : -cellmax; 																                                                                                                                          						
 	}																														                                                                                                                       
 	return 0;																												                                                                                                                       
