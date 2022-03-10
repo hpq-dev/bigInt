@@ -7,6 +7,10 @@
 	*
 */
 
+#if defined BigIntLibrary
+	#endinput
+#endif
+#define BigIntLibrary
 
 new bStr[32];																										
 
@@ -35,7 +39,7 @@ stock whereBytes(&eBit:a,&eBit:b,value) {
 		value=-value;													
 		a = a - eBit:(value / Bytes1024);																									
 		if(a && b < eBit:Bytes1024) b = eBit:((_:b + Bytes1024) - (value % Bytes1024)), --a; else b = eBit:(_:b - (value % Bytes1024));					
-		if(_:b > (Bytes1024-1)) ++a,b -= eBit:Bytes1024;					
+		if(b >= eBit:Bytes1024) ++a, b -= eBit:Bytes1024;					
 	} else a = a + eBit:((_:b + value) / Bytes1024), b = eBit:((_:b + value) % Bytes1024);
 	return 1;																												
 }
@@ -50,33 +54,35 @@ stock _bytes32(eBit:a,eBit:b) {
 	}																														                                                                                                                       
 	return 0;																												                                                                                                                       
 }			
-#define addBytes64(%1,%2) extractBytes(BT:<%1>,#%2)																												                                                                                                                       
-stock extractBytes(&eBit:a,&eBit:b,const value[],l=-1,val=0) {                                                                                                                       
-	if(value[0] == '-') {                                                                                                                       
-		if((l=strmid(bStr, value, 0, 21)) > 10) {                                                                                                                       
-			val = strval(bStr[(l = l - 9)]), bStr[l] = '\0';	     
-			a = a + eBit:strval(bStr);                                                                                                                                                                                                                                                    
-			whereBytes(a, b, _:a>-1?-val:val);   
-			return 1;                                                                                     
-		}                                                                                                                       
-		whereBytes(a, b, _:a>-1?strval(bStr):-val);                                                                                                                   
-	} else {                                                                                                                       
-		if((l=strmid(bStr, value, 0, 20)) > 9) {                                                                                                                       
+#define addBytes64(%1,%2) extractBytes(BT:<%1>,%2)																												                                                                                                                       
+stock extractBytes(&eBit:a,&eBit:b,const value[],l=-1,val=0) {                                                                                                                     
+	if(value[0] != '-') {     
+	    if((l=strmid(bStr, value, 0, 20)) > 9) {                                                                                                                       
 			b = b + eBit:strval(bStr[(l = l - 9)]), bStr[l] = '\0';														
 			a = a + eBit:strval(bStr);	
+			if(_:b > Bytes1024 - 1) b = b - eBit:Bytes1024, ++a;
 			return 1;																			
 		}																													
-		b = b + eBit:strval(bStr);																			
-	}	
+		b = b + eBit:strval(bStr);		
+		if(_:b > Bytes1024 - 1) b = b - eBit:Bytes1024, ++a;
+	} else {
+		if((l=strmid(bStr, value, 1, 21)) > 9) {                                                                                                                       
+			val = strval(bStr[(l = l - 9)]), bStr[l] = '\0';
+			a = a - eBit:strval(bStr);                                                                                                                                                                                                                                                  
+			whereBytes(a, b, _:a>-1?-val:val);   
+			return 1;                                                                                     
+		}                                                                                                      
+		whereBytes(a, b, _:a>-1?-strval(bStr):strval(bStr));  																		
+	}		
 	return 1;																													
-}																															
+}		
 stock isBigInt(const bigInt[], i=-1) {																									
 	if(bigInt[0]=='-'&&bigInt[1]) ++i;																										
 	while(IS_IN_RANGE(bigInt[++i],48,58)) {}																									
 	return !bigInt[i];																										
 }																															
 
-#define OPByte(%1,%2,%3) bytesOperator(BT:<%1>,#%2,#%3)																						
+#define OPByte(%1,%2,%3) bytesOperator(BT:<%1>,#%2,%3)																						
 stock bytesOperator(																							
 	eBit:bOP1,eBit:OP1,const _oper[],const _oper2[], 																									
 	eBit:bVal=eBit:0, eBit:Val=eBit:0																								
@@ -94,12 +100,13 @@ stock bytesOperator(
 			#if defined PrintBacktrace																					
 				PrintBacktrace();																					
 			#else																								
-				printf("[BigInt ERROR] Invalid operator '%s'!", _oper)																					
+				printf("[BigInt ERROR] Invalid operator '%s'!", _oper);																					
 			#endif																								
-		}																										
+		}
 	}																											
 	return false;																								
-}					
+}
+
 #define valueBigInt(%1)	stringBytes(BT:<%1>)																														
 stock stringBytes(eBit:a,eBit:b) {
 	if(!a) format(bStr,sizeof bStr,"%d", _:b);
@@ -128,4 +135,4 @@ stock formatStrNumber(const int[], const chars[] = ".", l=-1) {
 #if defined cache_get_value_name_bigint    && !defined cache_get_value_name
  || defined cache_get_field_content_bigint && !defined cache_get_field_content
 	#error The function you are using does not match mysql													
-#endif																															
+#endif
