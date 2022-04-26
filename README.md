@@ -20,7 +20,7 @@ addBytes32(var_name, 1231231231);
 
 With this function you can add over the limit of 2147483647. It is recommended to use this function only when large numbers are needed.
 ```pawn
-addBytes64(var_name, 3453453453453525534);
+addBytes64(var_name, #3453453453453525534);
 ```
 
 This function formats your bigint variable.
@@ -59,7 +59,7 @@ OPByte(var_name, operator, oper1);
 >
 
 // example:
-if(OPByte(var_name, <=, 10000)) return true;
+if(OPByte(var_name, <=, #10000)) return true;
 ```
 
 This function checks for string numbers.
